@@ -8,10 +8,10 @@ Código, comandos y ejercicios para acompañar los videos de Rubén. Cada serie 
 
 ## Cómo descargar
 
-En GitHub, selecciona **Code → Download ZIP** para descargar el repositorio completo. Extrae el ZIP y entra en la carpeta del episodio. También puedes consultar los comandos directamente desde el navegador o clonar el repositorio:
+Abre la carpeta del episodio para consultar comandos y código desde el navegador. En GitHub, selecciona **Code → Download ZIP** para descargar todos los ejemplos. También puedes clonar el repositorio:
 
 ```bash
 git clone https://github.com/esmarr58/tutoriales.git
 ```
 
-Lee el README del episodio para conocer las versiones y los pasos de ejecución. Los ejemplos no incluyen SDK, dependencias descargadas ni compilaciones.
+Lee el README de cada episodio para conocer las versiones y los pasos de ejecución. Los ejemplos no incluyen SDK, dependencias descargadas ni compilaciones. No necesitas una cuenta de GitHub para consultar o descargar estos archivos públicos.

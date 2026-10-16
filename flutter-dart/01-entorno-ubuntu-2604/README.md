@@ -1,19 +1,23 @@
-# Flutter y Dart 01 ? Material para practicar
+# Flutter y Dart 01: material para practicar
 
-Este paquete acompa?a el episodio de instalación del entorno Flutter para escritorio Linux en Ubuntu 26.04 con VS Code, del canal #tecnocircuito.
+Este material acompaña el episodio de #tecnocircuito sobre cómo preparar Ubuntu 26.04 y VS Code para compilar una aplicación Flutter de escritorio para Linux.
 
-## Qué contiene
+**Enlace público del episodio:** https://github.com/esmarr58/tutoriales/tree/main/flutter-dart/01-entorno-ubuntu-2604
 
-- `comandos.md`: instalación paso a paso, comprobaciones, versiones y referencias.
-- `hola_flutter/`: proyecto del contador, código Dart, configuración Linux y prueba automatizada.
-- `hola_flutter/lib/main.dart`: entrada y pantalla del contador.
-- `hola_flutter/test/widget_test.dart`: prueba del incremento del contador.
+## Contenido
 
-El contador es el ejemplo inicial generado por Flutter, sin modificaciones didácticas en este episodio. Aquí comprobamos la instalación; su código se estudiará por partes en los siguientes videos.
+- `comandos.md`: pasos de instalación, verificaciones, versiones y enlaces oficiales.
+- `hola_flutter/`: proyecto inicial del contador, configuración para Linux y prueba automatizada.
+- `hola_flutter/lib/main.dart`: código Dart de la aplicación.
+- `hola_flutter/test/widget_test.dart`: prueba que verifica el incremento del contador.
 
-## Cómo utilizarlo
+El contador es la plantilla inicial generada por Flutter. En este episodio se prepara y comprueba el entorno; el código se estudiará por partes en los siguientes videos.
 
-Primero sigue `comandos.md` para instalar el entorno en Ubuntu. Después extrae este ZIP en una carpeta de tu usuario y abre una terminal dentro de `hola_flutter`:
+## Descarga y uso
+
+Puedes abrir los archivos aquí mismo en GitHub o descargar el repositorio completo con **Code → Download ZIP**. Para obtener solo esta carpeta en el navegador, abre el enlace público de arriba. No necesitas crear una cuenta de GitHub.
+
+Después de instalar Flutter, extrae el ZIP, abre una terminal en `hola_flutter` y ejecuta:
 
 ```bash
 flutter pub get
@@ -22,22 +26,17 @@ flutter test
 flutter run -d linux
 ```
 
-No uses sudo para ejecutar estos comandos. Para abrir el proyecto en VS Code, ejecuta `code .` desde esa misma carpeta. Las dependencias y archivos generados se reconstruyen en tu equipo; no se incluyen compilaciones ni cachés.
+También puedes abrir VS Code con `code .`. No uses `sudo` para estos comandos. El SDK, las dependencias descargadas y las compilaciones se generan en tu equipo y no forman parte de esta descarga.
 
-Puedes seguir el video creando el proyecto desde cero, o abrir esta copia para comparar. Si creas el proyecto con otra versión de Flutter, la plantilla inicial puede variar. Versiones usadas: Flutter 3.47.7 y Dart 3.13.5. Las comprobaciones de análisis, prueba y ejecución del episodio se realizaron en Ubuntu.
+## Versiones comprobadas
 
-## Reto y resultado esperado
+- Ubuntu 26.04.1 LTS
+- Flutter 3.47.7
+- Dart 3.13.5
+- VS Code 1.142.0
 
-1. Abre una terminal nueva y comprueba `flutter --version` y `dart --version`.
-2. En la carpeta del proyecto, ejecuta la app Linux.
-3. Desde una ejecución nueva, pulsa tres veces el botón más: el contador debe mostrar 3.
-4. Vuelve a la terminal de ejecución y pulsa `q` para salir.
+Si generas el proyecto con otra versión de Flutter, la plantilla puede variar. El análisis, la prueba, la compilación Linux y el incremento del contador se comprobaron en Ubuntu.
 
-La prueba incluida comprueba el paso de 0 a 1. El reto de tres pulsaciones se comprueba manualmente.
+## Reto
 
-
-## Acceso al material
-
-Carpeta del episodio: https://github.com/esmarr58/tutoriales/tree/main/flutter-dart/01-entorno-ubuntu-2604
-
-Descarga del repositorio: https://github.com/esmarr58/tutoriales/archive/refs/heads/main.zip
+Abre una terminal nueva, comprueba las versiones y ejecuta el proyecto. Desde una ejecución nueva, pulsa tres veces el botón más: el contador debe mostrar 3. Para salir de `flutter run`, vuelve a la terminal y pulsa `q`.
