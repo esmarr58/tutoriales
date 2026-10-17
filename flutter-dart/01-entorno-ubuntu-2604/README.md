@@ -6,7 +6,7 @@ Este material acompaña el episodio de #tecnocircuito sobre cómo preparar Ubunt
 
 ## Contenido
 
-- `comandos.md`: pasos de instalación, verificaciones, versiones y enlaces oficiales.
+- [`comandos.md`](comandos.md): pasos de instalación completos, teclas para editar `~/.bashrc`, verificaciones, versiones y enlaces oficiales.
 - `hola_flutter/`: proyecto inicial del contador, configuración para Linux y prueba automatizada.
 - `hola_flutter/lib/main.dart`: código Dart de la aplicación.
 - `hola_flutter/test/widget_test.dart`: prueba que verifica el incremento del contador.
@@ -15,7 +15,7 @@ El contador es la plantilla inicial generada por Flutter. En este episodio se pr
 
 ## Descarga y uso
 
-Puedes abrir los archivos aquí mismo en GitHub o descargar el repositorio completo con **Code → Download ZIP**. Para obtener solo esta carpeta en el navegador, abre el enlace público de arriba. No necesitas crear una cuenta de GitHub.
+Puedes abrir los archivos aquí mismo en GitHub. Para descargarlos, vuelve a la raíz del repositorio y pulsa **Code → Download ZIP**: se descargará el repositorio completo como `tutoriales-main.zip`. No necesitas crear una cuenta de GitHub.
 
 Después de instalar Flutter, extrae el ZIP, abre una terminal en `hola_flutter` y ejecuta:
 
