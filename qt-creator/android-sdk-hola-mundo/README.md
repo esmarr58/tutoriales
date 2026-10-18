@@ -29,7 +29,7 @@ Debes ver `preparar-sdk.sh`, `crear-emulador.sh`, `iniciar-emulador.sh` y `hola_
 
 ## 2. Componentes de Qt
 
-Se supone que Qt Desktop ya funciona como en el curso básico. Abre `MaintenanceTool` de `~/Qt`, inicia sesión si la herramienta lo solicita y elige **Add or remove components**. Expande **Qt → Qt 6.12.0 → Android**. Instala Android **x86_64** para este emulador; ARM64 es la arquitectura típica de móviles modernos y se probó compilación, no ejecución física. Conserva Desktop gcc_64. Revisa los componentes y licencias, aplica los cambios y espera a que termine antes de abrir Creator.
+Se supone que Qt Desktop ya funciona como en el curso básico. Abre `MaintenanceTool` de `~/Qt`, inicia sesión si la herramienta lo solicita y elige **Add or remove components**. Expande **Qt 6.12.0** y marca **Android**. En la versión mostrada, Android es un componente agrupado que incluye varias arquitecturas: no hay que desplegarlo para elegir x86_64. Esa arquitectura se selecciona después en **Configure Project**. Conserva Desktop gcc_64 y pulsa **Next** para revisar los cambios. Si Android ya está instalado, consérvalo; no lo desmarques para reinstalarlo. Si lo estás añadiendo, revisa licencias, confirma y espera a que termine. Cierra MaintenanceTool antes de abrir Creator.
 
 ## 3. Java, SDK, NDK e imagen
 
@@ -47,61 +47,41 @@ Usa command-line tools **12.0** con ZIP y SHA-256 fijos del ensayo. También ins
 
 Abre **Preferences → SDKs → Android** (en Creator 20). Configura:
 
-- JDK location: `/usr/lib/jvm/java-21-openjdk-amd64`
-- Android SDK location: tu carpeta personal, `Android/Sdk`; por ejemplo `/home/TU_USUARIO/Android/Sdk`.
+- JDK location: pulsa **Browse**, selecciona `/usr/lib/jvm/java-21-openjdk-amd64` y confirma con **Choose**. Comprueba que el campo conserva la ruta completa, no solo `/`.
+- Android SDK location: pulsa **Browse**, abre tu carpeta personal, **Android → Sdk** y confirma con **Choose**. La ruta queda dentro de tu carpeta personal; por ejemplo `/home/TU_USUARIO/Android/Sdk`. En la grabación aparece `/home/r/Android/Sdk` porque el usuario del equipo se llama `r`. No crees una carpeta `r` ni copies ese nombre si tu usuario es diferente. **Android** y **.android** son carpetas distintas; el SDK está en la primera.
 - NDK: `27.2.12479018`, detectado dentro del SDK.
 - Activa **Automatically create kits for Android tool chains**.
 - Comprueba **Android settings are OK**. `SDK Version: 23.0` en ese mensaje se refiere a command-line tools, no a Android API 23.
 
-Este ejemplo no usa HTTPS ni requiere OpenSSL. No confundas ese componente opcional con un error de JDK/SDK/NDK.
+La página Android de Creator 20 indica que sus ajustes tienen efecto inmediato. Antes de salir comprueba que las dos rutas siguen completas, el NDK aparece y Android settings are OK. Este ejemplo no usa HTTPS ni requiere OpenSSL. No confundas ese componente opcional con un error de JDK/SDK/NDK.
 
-## 5. Aceleración y emulador
+## 5. Crear y arrancar el emulador por software
 
-Android no admite el emulador acelerado dentro de otra VM. El ensayo con KVM anidado llegó a funcionar en Ubuntu1, pero al grabar ocurrió un reinicio inesperado de Windows cuya causa no quedó confirmada. **No recomendamos repetir KVM anidado.** El script ahora rechaza esa combinación. Para aceleración usa Ubuntu instalado directamente en el equipo. No basta con esperar si KVM no está disponible.
+Este es el recorrido de la grabación dentro de VirtualBox: **sin KVM ni virtualización anidada**. No apagues Ubuntu ni cambies las opciones de VirtualBox para estos pasos. La alternativa por software es lenta y experimental; no promete rendimiento adecuado para cualquier equipo. Para aceleración, consulta la documentación de Android y usa un entorno físico compatible, fuera de otra VM. El script rechaza KVM anidado; no mezcles las dos rutas.
 
-### Alternativa experimental para la grabación en una VM
-
-```bash
-bash iniciar-emulador.sh --software
-```
-
-Esta alternativa usa CPU por software (`-accel off`), GPU por software, 2 núcleos y 2048 MB. Puede tardar varios minutos y no sustituye la recomendación de Ubuntu físico. Sobre la imagen AOSP de depuración del episodio, el script reinicia ADB como root, fija `ro.hw_timeout_multiplier=10` y reinicia los servicios Android para ampliar sus esperas. No modifica los tiempos de espera de Windows ni reinicia la PC. La propiedad dura esta sesión del emulador. Espera a ver la pantalla de inicio; `adb devices` o `sys.boot_completed=1` por sí solos no prueban que la interfaz esté lista.
-
-Los pasos de esta alternativa se ejecutaron individualmente durante la recuperación de la grabación: el APK se instaló desde Qt Creator y mostró Hola, Android. El arranque completo del nuevo script agrupado sobre un AVD recién creado queda pendiente de repetir. Se conservó el AVD original del ensayo y se utilizó una copia durante la recuperación. No se presenta como una prueba desde un sistema vacío.
-
-### Registro del ensayo previo con virtualización anidada
-
-Los pasos siguientes documentan el ensayo inicial; no son la ruta recomendada para una VM.
-
-Para reproducir **Ubuntu1 en VirtualBox**: apaga Ubuntu normalmente (no guardar estado), conserva una instantánea y en Windows abre VirtualBox, selecciona la VM apagada, **Configuración → Sistema → Procesador → Habilitar VT-x/AMD-V anidado**. Si la opción no está disponible, revisa compatibilidad y configuración de virtualización del equipo; no fuerces pasos de este tutorial sobre una configuración diferente.
-
-Alternativa exacta usada en el ensayo desde PowerShell, solo con esa VM apagada:
-
-```powershell
-& 'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe' modifyvm Ubuntu1 --nested-hw-virt on
-```
-
-En Ubuntu:
-
-```bash
-sudo usermod -aG kvm "$USER"
-```
-
-Cierra sesión e inicia de nuevo para aplicar el grupo. Vuelve a abrir Terminal y la carpeta del material. Comprueba:
-
-```bash
-"$HOME/Android/Sdk/emulator/emulator" -accel-check
-```
-
-Debe indicar KVM instalado y usable. Si no existe el grupo kvm o /dev/kvm, detente: primero resuelve soporte/carga del módulo KVM; agregar un grupo no crea aceleración.
+En la terminal de la carpeta del material:
 
 ```bash
 cd "$HOME/Proyectos/tutoriales-main/qt-creator/android-sdk-hola-mundo"
 bash crear-emulador.sh
-bash iniciar-emulador.sh
+bash iniciar-emulador.sh --software
 ```
 
-Mantén la terminal abierta. Sin opciones, el script usa GPU por software y CPU acelerada por KVM **solo fuera de una VM**. Dentro de VirtualBox se detiene y remite a la alternativa experimental anterior. Espera a la pantalla de inicio de Android; un marco de teléfono vacío no indica arranque completo. No inicies dos copias del mismo AVD.
+El primer script crea **Qt_Hola_API35** o conserva el existente. La opción **--software** del segundo comando es necesaria para este recorrido. No omitas los dos guiones ni sustituyas el comando por otra variante. Mantén la terminal abierta. Si ya hay un emulador en emulator-5554, el script pide cerrarlo antes de iniciar otro; no lances dos copias.
+
+Usa CPU por software (`-accel off`), GPU por software, 2 núcleos y 2048 MB. Sobre la imagen AOSP de depuración del episodio, el script reinicia ADB como root, fija `ro.hw_timeout_multiplier=10` y reinicia los servicios Android. Esto amplía las esperas dentro del Android emulado; no modifica Windows ni reinicia la PC. La propiedad pertenece a esa sesión.
+
+El primer arranque tarda varios minutos. Espera la **pantalla de inicio de Android**, con sus iconos, no solo el marco del teléfono. Si queda negra, pulsa el **botón circular Inicio** del emulador. En la grabación se recorta la espera.
+
+Abre otra terminal con **Ctrl+Alt+T** y ejecuta:
+
+```bash
+"$HOME/Android/Sdk/platform-tools/adb" devices
+```
+
+Debe aparecer `emulator-5554    device`. Si figura `offline`, espera. `device` y `sys.boot_completed=1` no sustituyen la comprobación visual del escritorio.
+
+El 2026-10-18 se repitió el script agrupado `--software` desde un **AVD nuevo y aislado**, conservando el anterior. Se comprobó `sys.boot_completed=1`, la propiedad de esperas en 10, ADB en estado device y el escritorio tras pulsar Inicio. Esto valida ese arranque concreto, no toda la instalación desde una VM vacía ni el rendimiento en otros equipos.
 
 ## 6. Abrir y ejecutar el proyecto
 
@@ -120,7 +100,7 @@ Pulsa **Ctrl+B** y comprueba compilación correcta. Pulsa **Ctrl+R**; selecciona
 
 - No hay kit Android: revisar componente Android de Qt y creación automática de kits.
 - No hay dispositivo: encender AVD, esperar arranque y comprobar `~/Android/Sdk/platform-tools/adb devices`; debe figurar `device`, no `offline`.
-- KVM no usable: resolver aceleración, no esperar indefinidamente.
+- El script pide KVM: verifica que escribiste `--software` como en este recorrido; no actives virtualización anidada para continuarlo.
 - Mensaje de Java/NDK: comprobar rutas/versiones antes de modificar el proyecto.
 
 Reto: cambia `text` de `etiquetaSaludo` a **Mi primera app Android**, guarda y ejecuta otra vez. Debe verse el texto nuevo dentro del emulador. El paquete generado es de desarrollo; no está preparado para distribución comercial ni firmado para Play Store.
