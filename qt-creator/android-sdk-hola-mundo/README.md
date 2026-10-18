@@ -57,7 +57,21 @@ Este ejemplo no usa HTTPS ni requiere OpenSSL. No confundas ese componente opcio
 
 ## 5. Aceleración y emulador
 
-Android recomienda ejecutar el emulador acelerado directamente en el equipo. En esta VM funcionó virtualización anidada, pero el emulador advierte que no es recomendada y puede rendir peor. No basta con esperar si KVM no está disponible.
+Android no admite el emulador acelerado dentro de otra VM. El ensayo con KVM anidado llegó a funcionar en Ubuntu1, pero al grabar ocurrió un reinicio inesperado de Windows cuya causa no quedó confirmada. **No recomendamos repetir KVM anidado.** El script ahora rechaza esa combinación. Para aceleración usa Ubuntu instalado directamente en el equipo. No basta con esperar si KVM no está disponible.
+
+### Alternativa experimental para la grabación en una VM
+
+```bash
+bash iniciar-emulador.sh --software
+```
+
+Esta alternativa usa CPU por software (`-accel off`), GPU por software, 2 núcleos y 2048 MB. Puede tardar varios minutos y no sustituye la recomendación de Ubuntu físico. Sobre la imagen AOSP de depuración del episodio, el script reinicia ADB como root, fija `ro.hw_timeout_multiplier=10` y reinicia los servicios Android para ampliar sus esperas. No modifica los tiempos de espera de Windows ni reinicia la PC. La propiedad dura esta sesión del emulador. Espera a ver la pantalla de inicio; `adb devices` o `sys.boot_completed=1` por sí solos no prueban que la interfaz esté lista.
+
+Los pasos de esta alternativa se ejecutaron individualmente durante la recuperación de la grabación: el APK se instaló desde Qt Creator y mostró Hola, Android. El arranque completo del nuevo script agrupado sobre un AVD recién creado queda pendiente de repetir. Se conservó el AVD original del ensayo y se utilizó una copia durante la recuperación. No se presenta como una prueba desde un sistema vacío.
+
+### Registro del ensayo previo con virtualización anidada
+
+Los pasos siguientes documentan el ensayo inicial; no son la ruta recomendada para una VM.
 
 Para reproducir **Ubuntu1 en VirtualBox**: apaga Ubuntu normalmente (no guardar estado), conserva una instantánea y en Windows abre VirtualBox, selecciona la VM apagada, **Configuración → Sistema → Procesador → Habilitar VT-x/AMD-V anidado**. Si la opción no está disponible, revisa compatibilidad y configuración de virtualización del equipo; no fuerces pasos de este tutorial sobre una configuración diferente.
 
@@ -87,7 +101,7 @@ bash crear-emulador.sh
 bash iniciar-emulador.sh
 ```
 
-Mantén la terminal abierta. El script usa GPU por software y CPU acelerada por KVM. Espera a la pantalla de inicio de Android; un marco de teléfono vacío no indica arranque completo. No inicies dos copias del mismo AVD.
+Mantén la terminal abierta. Sin opciones, el script usa GPU por software y CPU acelerada por KVM **solo fuera de una VM**. Dentro de VirtualBox se detiene y remite a la alternativa experimental anterior. Espera a la pantalla de inicio de Android; un marco de teléfono vacío no indica arranque completo. No inicies dos copias del mismo AVD.
 
 ## 6. Abrir y ejecutar el proyecto
 
