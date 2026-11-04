@@ -11,6 +11,7 @@ Código, comandos y ejercicios para acompañar los videos de Rubén. Cada serie 
 - [01.a · Estructura de los archivos](qt-creator/01a-estructura-archivos/): complemento entre 01 y 02, ejemplo Hola mundo, mapa de archivos y reto.
 - [Android · SDK y Hola mundo en el emulador](qt-creator/android-sdk-hola-mundo/): scripts, versiones, configuración de Qt Creator y ejemplo Qt Widgets.
 - [Android y SQLite · 01–04](qt-creator/android-sqlite/): base SQLite en el teléfono; INSERT, consulta en QTableWidget y UPDATE, con las soluciones de los retos.
+- [Qt y OpenCV · 02–06](qt-creator/opencv/): de QImage a cv::Mat, BGR contra RGB, leer un píxel con clic o toque, gris, brillo y contraste, e inspector de imágenes; mismo proyecto para escritorio y Android.
 
 ## Cómo descargar
 

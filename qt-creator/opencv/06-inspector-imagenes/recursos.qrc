@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>muestras/formas.png</file>
+        <file>muestras/colores_bgr.png</file>
+        <file>muestras/celulas.png</file>
+    </qresource>
+</RCC>

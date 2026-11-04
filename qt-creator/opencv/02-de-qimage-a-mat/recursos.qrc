@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>muestras/formas.png</file>
+    </qresource>
+</RCC>
