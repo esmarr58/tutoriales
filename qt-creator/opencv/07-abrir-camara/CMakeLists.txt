@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.19)
 project(camara_opencv LANGUAGES CXX)
 
 # Multimedia trae QCamera, QMediaCaptureSession y QVideoSink.
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Multimedia)
+# 6.9: desde esa versión existe qt_add_android_permission (más abajo).
+find_package(Qt6 6.9 REQUIRED COMPONENTS Core Widgets Multimedia)
 
 qt_standard_project_setup()
 
