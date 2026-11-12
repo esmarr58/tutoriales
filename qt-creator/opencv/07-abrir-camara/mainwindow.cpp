@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     construirInterfaz();
-    // La sesión entrega los cuadros de la cámara al sumidero; el sumidero nos avisa de cada uno.
+    // La sesión entrega cada cuadro de la cámara al sumidero; el sumidero nos avisa.
     sesion.setVideoSink(&sumidero);
     connect(&sumidero, &QVideoSink::videoFrameChanged, this, &MainWindow::alLlegarCuadro);
 }
@@ -44,7 +44,7 @@ void MainWindow::construirInterfaz()
     botonCamara->setMinimumHeight(64);   // grande para el dedo
     botonCambiar = new QPushButton("Cambiar cámara");
     botonCambiar->setMinimumHeight(64);
-    botonCambiar->setEnabled(false);     // se activa con la cámara encendida y más de una cámara
+    botonCambiar->setEnabled(false);     // se activa si la cámara está encendida y hay otra
 
     casillaGris = new QCheckBox("Escala de grises (OpenCV)");
     casillaGris->setMinimumHeight(56);
@@ -88,7 +88,7 @@ void MainWindow::pedirPermiso()
     QCameraPermission permiso;
     switch (qApp->checkPermission(permiso)) {
     case Qt::PermissionStatus::Undetermined:
-        // Primera vez en Android: aparece el diálogo del sistema. Al responder, se llama la lambda.
+        // Primera vez en Android: diálogo del sistema; al responder, corre la lambda.
         etiquetaEstado->setText("Pidiendo permiso para usar la cámara…");
         qApp->requestPermission(permiso, this, [this](const QPermission &respuesta) {
             if (respuesta.status() == Qt::PermissionStatus::Granted)
@@ -118,7 +118,7 @@ void MainWindow::abrirCamara()
     const QCameraDevice elegida = camaras[indiceCamara];
 
     camara = new QCamera(elegida, this);
-    // Formato: el más pequeño de al menos 640 px de ancho. Más píxeles = más trabajo por cuadro.
+    // Formato: el más pequeño con al menos 640 px de ancho (más píxeles, más trabajo).
     QCameraFormat mejor;
     for (const QCameraFormat &f : elegida.videoFormats()) {
         const QSize r = f.resolution();
@@ -131,7 +131,8 @@ void MainWindow::abrirCamara()
     if (!mejor.isNull())
         camara->setCameraFormat(mejor);
 
-    connect(camara, &QCamera::errorOccurred, this, [this](QCamera::Error, const QString &texto) {
+    connect(camara, &QCamera::errorOccurred, this,
+            [this](QCamera::Error, const QString &texto) {
         etiquetaEstado->setText("Error de cámara: " + texto);
     });
     sesion.setCamera(camara);

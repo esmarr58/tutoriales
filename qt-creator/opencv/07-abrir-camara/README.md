@@ -21,7 +21,7 @@ cámara trasera en el teléfono, girada en vertical (480 × 640). Al apagar, que
 lo sigue procesando.
 
 En el emulador por software (sin aceleración, como en una VM) llegan de 0.4 a 1.5 cuadros por segundo: es el
-emulador, no el programa. En un teléfono real o en un emulador acelerado llegan 15–30.
+emulador, no el programa: en el escritorio, el mismo programa muestra 15 cuadros/s, los que manda la webcam virtual.
 
 ## Abrirlo
 
@@ -31,9 +31,15 @@ kits (Qt Maintenance Tool → Additional Libraries → Qt Multimedia).
 
 ## Cámara en el emulador de Android
 
-El emulador puede usar la webcam de tu computadora como cámara trasera. En el archivo
-`~/.android/avd/<tu AVD>.avd/config.ini` cambia `hw.camera.back=emulated` por `hw.camera.back=webcam0` y arranca
-el emulador de nuevo (con `emulated` verás una escena virtual en lugar de tu webcam).
+El emulador puede usar la webcam de tu computadora como cámara trasera (`webcam0` es la primera webcam). Con el
+emulador apagado:
+
+```bash
+sed -i 's/^hw.camera.back=.*/hw.camera.back=webcam0/' ~/.android/avd/Qt_Hola_API35.avd/config.ini
+grep camera.back= ~/.android/avd/Qt_Hola_API35.avd/config.ini    # hw.camera.back=webcam0
+```
+
+y arráncalo de nuevo (`bash iniciar-emulador.sh`, o `--software` en una máquina virtual).
 
 ## Probado en
 

@@ -26,7 +26,7 @@ protected:
 private:
     void construirInterfaz();
     void encenderApagar();          // botón principal
-    void pedirPermiso();            // Android pregunta al usuario; en el escritorio ya está concedido
+    void pedirPermiso();            // Android pregunta al usuario; el escritorio ya lo concede
     void abrirCamara();             // crea la QCamera elegida y la conecta a la sesión
     void apagarCamara();
     void cambiarCamara();           // pasa a la siguiente cámara de la lista
