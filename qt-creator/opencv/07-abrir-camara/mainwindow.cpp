@@ -3,10 +3,12 @@
 
 #include <QApplication>
 #include <QCameraDevice>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QMediaDevices>
 #include <QPermissions>
 #include <QPixmap>
+#include <QUrl>
 #include <QVBoxLayout>
 #include <opencv2/imgproc.hpp>
 
@@ -14,8 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     construirInterfaz();
-    // La sesión entrega cada cuadro de la cámara al sumidero; el sumidero nos avisa.
-    sesion.setVideoSink(&sumidero);
+    // Cámara o stream entregan cada cuadro al mismo sumidero; el sumidero nos avisa.
     connect(&sumidero, &QVideoSink::videoFrameChanged, this, &MainWindow::alLlegarCuadro);
 }
 
@@ -40,7 +41,7 @@ void MainWindow::construirInterfaz()
     etiquetaVideo->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     etiquetaVideo->setStyleSheet("background: black; color: white; font-size: 20pt;");
 
-    botonCamara = new QPushButton("Encender cámara");
+    botonCamara = new QPushButton("Encender");
     botonCamara->setMinimumHeight(64);   // grande para el dedo
     botonCambiar = new QPushButton("Cambiar cámara");
     botonCambiar->setMinimumHeight(64);
@@ -52,9 +53,18 @@ void MainWindow::construirInterfaz()
     casillaGris->setStyleSheet("QCheckBox { font-size: 20pt; }"
                                "QCheckBox::indicator { width: 36px; height: 36px; }");
 
-    etiquetaEstado = new QLabel("Pulsa «Encender cámara»");
+    // Como en OpenCV: un número es una cámara local; una URL es un video por red.
+    campoFuente = new QLineEdit("0");
+    campoFuente->setMinimumHeight(56);
+    campoFuente->setPlaceholderText("0, 1… o http://equipo:8080/video");
+    campoFuente->setInputMethodHints(Qt::ImhUrlCharactersOnly | Qt::ImhNoAutoUppercase);
+
+    etiquetaEstado = new QLabel("Escribe la fuente y pulsa «Encender»");
     etiquetaEstado->setAlignment(Qt::AlignCenter);
     etiquetaEstado->setWordWrap(true);
+
+    auto *filaFuente = new QFormLayout;
+    filaFuente->addRow("Fuente:", campoFuente);
 
     auto *filaBotones = new QHBoxLayout;
     filaBotones->addWidget(botonCamara);
@@ -65,6 +75,7 @@ void MainWindow::construirInterfaz()
     columna->addWidget(etiquetaVideo, 1);
     columna->addWidget(etiquetaEstado);
     columna->addWidget(casillaGris);
+    columna->addLayout(filaFuente);
     columna->addLayout(filaBotones);
     setCentralWidget(central);
     resize(900, 800);
@@ -77,10 +88,19 @@ void MainWindow::construirInterfaz()
 
 void MainWindow::encenderApagar()
 {
-    if (camara)
+    if (camara || reproductor) {
         apagarCamara();
-    else
+        return;
+    }
+    const QString texto = campoFuente->text().trimmed();
+    bool esNumero = false;
+    const int numero = texto.toInt(&esNumero);
+    if (esNumero) {
+        indiceCamara = numero;        // «0» = la primera cámara de la lista
         pedirPermiso();
+    } else {
+        abrirStream(QUrl::fromUserInput(texto));
+    }
 }
 
 void MainWindow::pedirPermiso()
@@ -135,10 +155,13 @@ void MainWindow::abrirCamara()
             [this](QCamera::Error, const QString &texto) {
         etiquetaEstado->setText("Error de cámara: " + texto);
     });
+    sesion.setVideoSink(&sumidero);
     sesion.setCamera(camara);
     camara->start();
 
-    botonCamara->setText("Apagar cámara");
+    campoFuente->setText(QString::number(indiceCamara));
+    nombreFuente = elegida.description();
+    botonCamara->setText("Apagar");
     botonCambiar->setEnabled(camaras.size() > 1);
     etiquetaEstado->setText("Abriendo: " + elegida.description());
     cuadros = 0;
@@ -146,18 +169,52 @@ void MainWindow::abrirCamara()
     reloj.start();
 }
 
+// Un stream (cámara IP, ESP32-CAM, teléfono con una aplicación de cámara IP) no es QCamera:
+// lo reproduce un QMediaPlayer, que entrega sus cuadros al MISMO sumidero. De ahí en
+// adelante el camino es idéntico: QVideoFrame -> QImage -> cv::Mat.
+void MainWindow::abrirStream(const QUrl &direccion)
+{
+    if (!direccion.isValid() || direccion.scheme().isEmpty()) {
+        etiquetaEstado->setText("Fuente no válida: escribe 0 o una URL http://…");
+        return;
+    }
+    sesion.setVideoSink(nullptr);     // el sumidero atiende a una sola fuente a la vez
+    reproductor = new QMediaPlayer(this);
+    reproductor->setVideoSink(&sumidero);
+    connect(reproductor, &QMediaPlayer::errorOccurred, this,
+            [this](QMediaPlayer::Error, const QString &texto) {
+        apagarCamara();               // no hay video: deja el botón listo para reintentar
+        etiquetaEstado->setText("Error del stream: " + texto);
+    });
+    reproductor->setSource(direccion);
+    reproductor->play();
+
+    nombreFuente = direccion.host();
+    botonCamara->setText("Apagar");
+    botonCambiar->setEnabled(false);
+    etiquetaEstado->setText("Conectando con " + direccion.toString() + "…");
+    cuadros = 0;
+    cps = 0;
+    reloj.start();
+}
+
 void MainWindow::apagarCamara()
 {
-    if (!camara)
-        return;
-    camara->stop();
-    sesion.setCamera(nullptr);
-    delete camara;
-    camara = nullptr;
+    if (camara) {
+        camara->stop();
+        sesion.setCamera(nullptr);
+        delete camara;
+        camara = nullptr;
+    }
+    if (reproductor) {
+        reproductor->stop();
+        reproductor->deleteLater();   // no delete: puede llamarse desde una señal suya
+        reproductor = nullptr;
+    }
     pendiente = QVideoFrame();
-    botonCamara->setText("Encender cámara");
+    botonCamara->setText("Encender");
     botonCambiar->setEnabled(false);
-    etiquetaEstado->setText("Cámara apagada");
+    etiquetaEstado->setText("Apagada");
 }
 
 void MainWindow::cambiarCamara()
@@ -207,11 +264,11 @@ void MainWindow::procesarPendiente()
                                          Qt::SmoothTransformation));
 
     // Cada segundo: cuántos cuadros alcanzamos a mostrar.
-    if (camara && reloj.elapsed() >= 1000) {
+    if ((camara || reproductor) && reloj.elapsed() >= 1000) {
         cps = cuadros * 1000.0 / reloj.restart();
         cuadros = 0;
         etiquetaEstado->setText(QString("%1 · %2 × %3 · %4 · %5 cuadros/s")
-                                    .arg(camara->cameraDevice().description())
+                                    .arg(nombreFuente)
                                     .arg(vista.cols).arg(vista.rows)
                                     .arg(vista.channels() == 1 ? "1 canal" : "3 canales")
                                     .arg(cps, 0, 'f', 1));

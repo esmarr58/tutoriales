@@ -35,6 +35,8 @@ target_link_libraries(camara_opencv
 # Además, el código pide el permiso al usuario la primera vez (QCameraPermission).
 if(ANDROID)
     qt_add_android_permission(camara_opencv NAME android.permission.CAMERA)
+    # Para la fuente por red (http://…): el stream llega por Internet o por la red local.
+    qt_add_android_permission(camara_opencv NAME android.permission.INTERNET)
 endif()
 
 include(GNUInstallDirs)
