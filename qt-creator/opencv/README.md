@@ -48,6 +48,7 @@ target_link_libraries(visor_opencv PRIVATE Qt::Core Qt::Widgets ${OpenCV_LIBS})
 - [Qt y OpenCV #4 · Lee el valor de un píxel con un clic o un toque](04-leer-pixel/)
 - [Qt y OpenCV #5 · Escala de grises, brillo y contraste con un deslizador](05-gris-brillo-contraste/)
 - [Qt y OpenCV #6 · Práctica: un inspector de imágenes](06-inspector-imagenes/)
+- [Qt y OpenCV #7 · Abre la cámara en escritorio y Android](07-abrir-camara/) (proyecto nuevo `camara_opencv`, con Qt Multimedia)
 
 Las imágenes de `muestras/` las genera nuestro propio código (formas y colores con valores conocidos y una
 imagen sintética de «células»); se pueden usar libremente. OpenCV se distribuye con licencia Apache 2.0
