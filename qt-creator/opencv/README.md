@@ -50,6 +50,7 @@ target_link_libraries(visor_opencv PRIVATE Qt::Core Qt::Widgets ${OpenCV_LIBS})
 - [Qt y OpenCV #6 · Práctica: un inspector de imágenes](06-inspector-imagenes/)
 - [Qt y OpenCV #7 · Abre la cámara en escritorio y Android](07-abrir-camara/) (proyecto nuevo `camara_opencv`, con Qt Multimedia)
 - [Qt y OpenCV #8 · Conducción autónoma con una máquina de estados](08-conduccion-autonoma/) (el `camara_opencv` del #7 más Qt WebSockets; maneja el robot virtual)
+- [Práctica · Tu robot obedece cuatro colores](08b-robot-cuatro-colores/) (proyecto `robot_colores`: el #8 reducido a cuatro hojas de color que manejan el robot real)
 
 Las imágenes de `muestras/` las genera nuestro propio código (formas y colores con valores conocidos y una
 imagen sintética de «células»); se pueden usar libremente. OpenCV se distribuye con licencia Apache 2.0
