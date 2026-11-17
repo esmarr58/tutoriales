@@ -25,7 +25,8 @@ qt_add_executable(camara_opencv
     mainwindow.h
     puente.cpp
     puente.h
-    # Nuevo en el 08. Lógica pura, sin Qt ni OpenCV (se prueba sola: pruebas/prueba_logica.cpp):
+    # Nuevo en el 08. Lógica pura, sin Qt ni OpenCV
+    # (se prueba sola: pruebas/prueba_logica.cpp):
     franja.cpp
     franja.h
     color.cpp
@@ -54,7 +55,8 @@ if(ANDROID)
     qt_add_android_permission(camara_opencv NAME android.permission.INTERNET)
 endif()
 
-# Prueba de la lógica pura: un ejecutable de consola que no necesita Qt, OpenCV, cámara ni robot.
+# Prueba de la lógica pura: un ejecutable de consola que no necesita Qt, OpenCV,
+# cámara ni robot.
 #   cmake --build . --target prueba_logica && ./prueba_logica ../pruebas/datos
 if(NOT ANDROID)
     add_executable(prueba_logica

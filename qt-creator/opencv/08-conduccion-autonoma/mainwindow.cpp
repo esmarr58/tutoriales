@@ -21,11 +21,12 @@ MainWindow::MainWindow(QWidget *parent)
     // Cámara o stream entregan cada cuadro al mismo sumidero; el sumidero nos avisa.
     connect(&sumidero, &QVideoSink::videoFrameChanged, this, &MainWindow::alLlegarCuadro);
 
-    // El robot: un QWebSocket como en la app de la Práctica 3.
+    // El robot: un QWebSocket como en la aplicación de la Práctica 3.
     connect(&robot, &QWebSocket::connected, this, [this] {
         botonRobot->setText("Desconectar");
         ultimoMensaje.clear();
-        robot.sendTextMessage(R"({"tipo":"latido"})");   // el primer latido activa la telemetría
+        // El primer latido activa la telemetría.
+        robot.sendTextMessage(R"({"tipo":"latido"})");
         relojLatido.start(5000);
         mostrarDecision();
     });
@@ -39,7 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
         robot.sendTextMessage(R"({"tipo":"latido"})");
     });
 
-    // El ciclo de decisión: 8 veces por segundo, llegue el video a 5 o a 30 cuadros por segundo.
+    // El ciclo de decisión: 8 veces por segundo, llegue el video a 5
+    // o a 30 cuadros por segundo.
     connect(&relojDecision, &QTimer::timeout, this, &MainWindow::decidir);
     relojDecision.start(125);
     relojMensajes.start();
@@ -159,7 +161,8 @@ void MainWindow::construirInterfaz()
     });
 }
 
-void MainWindow::arrancar(const QString &fuente, const QString &direccionRobot, bool automatico)
+void MainWindow::arrancar(const QString &fuente, const QString &direccionRobot,
+                          bool automatico)
 {
     if (!fuente.isEmpty()) {
         campoFuente->setText(fuente);
@@ -358,7 +361,8 @@ void MainWindow::procesarPendiente()
     if ((camara || reproductor) && reloj.elapsed() >= 1000) {
         cps = cuadros * 1000.0 / reloj.restart();
         cuadros = 0;
-        etiquetaEstado->setText(QString("%1 · %2 × %3 · %4 cuadros/s · rayas: %5 · error %6 px")
+        etiquetaEstado->setText(QString("%1 · %2 × %3 · %4 cuadros/s · "
+                                        "rayas: %5 · error %6 px")
                                     .arg(nombreFuente)
                                     .arg(vista.cols).arg(vista.rows)
                                     .arg(cps, 0, 'f', 1)
@@ -413,8 +417,9 @@ void MainWindow::iniciarDetener()
     decidir();   // que el cambio se note de inmediato, sin esperar al reloj
 }
 
-// UN ciclo de decisión. Nunca se manda un mensaje por cuadro: el video puede llegar a 30 cuadros
-// por segundo, pero aquí se decide 8 veces por segundo con lo último que se vio.
+// UN ciclo de decisión. Nunca se manda un mensaje por cuadro: el video puede llegar
+// a 30 cuadros por segundo, pero aquí se decide 8 veces por segundo con lo último
+// que se vio.
 void MainWindow::decidir()
 {
     // Vigilancias: sin robot o sin video reciente no se puede conducir.
@@ -465,7 +470,8 @@ void MainWindow::enviarOrden(const Orden &orden)
         json["freno"] = orden.freno;
         json["ms"] = 500;
     }
-    const QString mensaje = QString::fromUtf8(QJsonDocument(json).toJson(QJsonDocument::Compact));
+    const QString mensaje =
+        QString::fromUtf8(QJsonDocument(json).toJson(QJsonDocument::Compact));
 
     // «parar» se manda UNA vez, al cambiar la decisión. Lo que mueve al robot sí se repite en
     // cada ciclo, porque el robot se detiene si deja de recibirlo.
@@ -483,7 +489,8 @@ void MainWindow::mostrarDecision()
         mensajes = 0;
     }
     const Estado estado = maquina.estado();
-    botonAuto->setText(estado == Estado::Espera || estado == Estado::Paro ? "Iniciar" : "Detener");
+    const bool detenida = estado == Estado::Espera || estado == Estado::Paro;
+    botonAuto->setText(detenida ? "Iniciar" : "Detener");
     QString texto = QString("%1 · marcha %2 · paleta %3 · %4 mensajes/s")
                         .arg(nombre(estado)).arg(nombre(maquina.marcha()))
                         .arg(nombre(maquina.colorFirme())).arg(mps, 0, 'f', 0);

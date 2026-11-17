@@ -114,5 +114,13 @@ virtual en Windows, mapa Circuito, cámara por omisión (640 × 480, 30 cuadros/
 **En el emulador por software no conduce:** llegan de 0.8 a 1.3 cuadros por segundo (como en el #7), se cumple
 la vigilancia de 1 s sin video y la máquina pasa a «PARO: sin video». Es el emulador, no el programa.
 
+**Cuadros por segundo de la cámara del robot virtual (17-nov-2026).** Con el simulador entregando 30 cuadros
+por segundo reales (medidos en el stream), el video se fue atrasando dentro de la aplicación y el coche se
+salió en la primera curva: tres corridas de tres, también con el código del 16-nov. Con la cámara en 20
+cuadros/s (panel «Conexión» o `{"tipo":"camara","fps":20}`): 214 s, 746 m, 0 infracciones, 6 altos por vuelta,
+8.1 `conducir` por segundo; con 25 cuadros/s, 75 s sin infracciones. La causa no está confirmada (se sospecha
+que el reproductor presenta el MJPEG a 25 cuadros/s). El 16-nov el coche manejó 400 s con la cámara puesta en
+30, pero entonces la aplicación mostraba de 12 a 14 cuadros/s. **Usa 20 cuadros/s en el simulador.**
+
 **Sin probar:** un teléfono Android real; la casilla «Robot real» con el robot físico (ESP32-S3); la casilla
 «Rayas oscuras» y el deslizador con una pista real; otros valores de `realismo` de la cámara.

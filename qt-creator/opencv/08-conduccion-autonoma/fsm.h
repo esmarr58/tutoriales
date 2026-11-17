@@ -8,7 +8,8 @@
 //
 //   Medida (lo que vio la cámara)  ->  paso()  ->  Orden (lo que se le manda al robot)
 //
-// Se llama UNA vez por ciclo de decisión (un QTimer de 125 ms en mainwindow.cpp), no una vez por cuadro.
+// Se llama UNA vez por ciclo de decisión (un QTimer de 125 ms en mainwindow.cpp),
+// no una vez por cuadro.
 
 enum class Estado {
     Espera,         // recién abierto o detenido con el botón: no se mueve
@@ -86,12 +87,14 @@ private:
 const char *nombre(Estado estado);
 const char *nombre(Marcha marcha);
 
-// Robot real (ESP32-S3 con practica4.ino): no entiende «conducir», solo «mover» con accion y ms,
-// y sus motores son todo o nada. La dirección se vuelve tres casos con una banda muerta.
+// Robot real (ESP32-S3 con practica4.ino): no entiende «conducir», solo «mover»
+// con accion y ms, y sus motores son todo o nada. La dirección se vuelve tres casos
+// con una banda muerta.
 struct MovimientoReal {
     const char *accion;   // "avanzar", "izquierda", "derecha" o "parar"
     int ms;
 };
-MovimientoReal aRobotReal(const Orden &o, int banda = 25, int msAvance = 300, int msGiro = 120);
+MovimientoReal aRobotReal(const Orden &o, int banda = 25, int msAvance = 300,
+                          int msGiro = 120);
 
 #endif // FSM_H

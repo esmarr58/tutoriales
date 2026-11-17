@@ -17,7 +17,8 @@ std::vector<std::uint8_t> perfilDeFranja(const cv::Mat &bgr, const ParametrosVis
     cv::Mat promedio;
     cv::reduce(gris, promedio, 0, cv::REDUCE_AVG, CV_8U);
 
-    return std::vector<std::uint8_t>(promedio.ptr<uchar>(0), promedio.ptr<uchar>(0) + promedio.cols);
+    const uchar *inicio = promedio.ptr<uchar>(0);
+    return std::vector<std::uint8_t>(inicio, inicio + promedio.cols);
 }
 
 cv::Mat mascaraDe(const cv::Mat &hsv, Color color)
@@ -25,7 +26,8 @@ cv::Mat mascaraDe(const cv::Mat &hsv, Color color)
     cv::Mat mascara = cv::Mat::zeros(hsv.size(), CV_8UC1);
     for (const RangoHsv &r : rangosDe(color)) {
         cv::Mat parte;
-        cv::inRange(hsv, cv::Scalar(r.hMin, r.sMin, r.vMin), cv::Scalar(r.hMax, 255, 255), parte);
+        cv::inRange(hsv, cv::Scalar(r.hMin, r.sMin, r.vMin),
+                    cv::Scalar(r.hMax, 255, 255), parte);
         cv::bitwise_or(mascara, parte, mascara);   // el rojo: rango bajo O rango alto
     }
     return mascara;
@@ -58,7 +60,8 @@ Vista percibir(const cv::Mat &bgr, const ParametrosVision &p, int &anchoReferenc
     for (Color color : {Color::Rojo, Color::Verde, Color::Azul, Color::Amarillo}) {
         // Cada mancha conectada de la máscara, con su área y su caja: una fila de `tabla`.
         cv::Mat etiquetas, tabla, centros;
-        const int n = cv::connectedComponentsWithStats(mascaraDe(hsv, color), etiquetas, tabla, centros, 8);
+        const int n = cv::connectedComponentsWithStats(mascaraDe(hsv, color), etiquetas,
+                                                       tabla, centros, 8);
         for (int i = 1; i < n; ++i) {     // la etiqueta 0 es el fondo
             Mancha m;
             m.area = tabla.at<int>(i, cv::CC_STAT_AREA);
@@ -68,7 +71,8 @@ Vista percibir(const cv::Mat &bgr, const ParametrosVision &p, int &anchoReferenc
             if (esDisco(m, p.disco) && m.area > areas[indice]) {
                 areas[indice] = m.area;
                 cajas[indice] = cv::Rect(tabla.at<int>(i, cv::CC_STAT_LEFT),
-                                         tabla.at<int>(i, cv::CC_STAT_TOP) + y0, m.ancho, m.alto);
+                                         tabla.at<int>(i, cv::CC_STAT_TOP) + y0,
+                                         m.ancho, m.alto);
             }
         }
     }
@@ -82,17 +86,20 @@ void dibujarVista(cv::Mat &bgr, const Vista &vista)
 {
     if (bgr.empty())
         return;
-    const cv::Scalar amarillo(0, 255, 255), cian(255, 255, 0), magenta(255, 0, 255), blanco(255, 255, 255);
+    const cv::Scalar amarillo(0, 255, 255), cian(255, 255, 0);
+    const cv::Scalar magenta(255, 0, 255), blanco(255, 255, 255);
     cv::rectangle(bgr, vista.zonaColor, cian, 1);                  // zona de las paletas
     cv::rectangle(bgr, vista.franja, amarillo, 2);                 // la franja
     const int y = vista.franja.y + vista.franja.height / 2;
-    cv::line(bgr, cv::Point(bgr.cols / 2, y - 22), cv::Point(bgr.cols / 2, y + 22), blanco, 2);   // centro de la imagen
+    const int mitad = bgr.cols / 2;                                // centro de la imagen
+    cv::line(bgr, cv::Point(mitad, y - 22), cv::Point(mitad, y + 22), blanco, 2);
     if (vista.carril.izquierda >= 0)
         cv::circle(bgr, cv::Point(vista.carril.izquierda, y), 8, magenta, cv::FILLED);
     if (vista.carril.derecha >= 0)
         cv::circle(bgr, cv::Point(vista.carril.derecha, y), 8, magenta, cv::FILLED);
     if (vista.carril.lineas != Lineas::Ninguna)                    // centro del carril
-        cv::drawMarker(bgr, cv::Point(vista.carril.centro, y), cv::Scalar(0, 255, 0), cv::MARKER_CROSS, 30, 3);
+        cv::drawMarker(bgr, cv::Point(vista.carril.centro, y), cv::Scalar(0, 255, 0),
+                       cv::MARKER_CROSS, 30, 3);
     if (vista.color != Color::Ninguno)
         cv::rectangle(bgr, vista.cajaDisco, magenta, 3);
 }

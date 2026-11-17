@@ -3,11 +3,13 @@
 
 #include <vector>
 
-// Lógica pura (sin Qt y sin OpenCV): los cuatro colores de las paletas y la prueba «¿es un disco?».
+// Lógica pura (sin Qt y sin OpenCV): los cuatro colores de las paletas
+// y la prueba «¿es un disco?».
 
 enum class Color { Ninguno, Rojo, Verde, Azul, Amarillo };
 
-// Un rango en HSV de OpenCV: H de 0 a 179, S y V de 0 a 255. El máximo de S y V siempre es 255.
+// Un rango en HSV de OpenCV: H de 0 a 179, S y V de 0 a 255.
+// El máximo de S y V siempre es 255.
 struct RangoHsv {
     int hMin, hMax;   // tono
     int sMin;         // saturación mínima: descarta blancos y grises
@@ -32,7 +34,8 @@ struct ParametrosDisco {
     int areaMin = 300;          // px: más chica, está lejos o es ruido
     double aspectoMin = 0.70;   // ancho / alto: un disco de frente da cerca de 1
     double aspectoMax = 1.40;
-    double llenadoMin = 0.60;   // área / (ancho x alto): un disco da pi/4 = 0.785; un anillo, menos
+    // área / (ancho x alto): un disco da pi/4 = 0.785; un anillo, menos
+    double llenadoMin = 0.60;
 };
 
 // La trampa del rojo: no todo lo rojo es una paleta. Filtra por tamaño y por forma.

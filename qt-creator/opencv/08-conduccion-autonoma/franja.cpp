@@ -26,7 +26,8 @@ Carril analizarFranja(const std::vector<std::uint8_t> &perfil, const ParametrosF
     if (c.izquierda >= 0 && c.derecha >= 0) {
         c.ancho = c.derecha - c.izquierda;
         if (c.ancho < p.anchoMin * ancho) {
-            // Demasiado angosto: no es el carril (la meta a cuadros, un reflejo, una raya al centro).
+            // Demasiado angosto: no es el carril
+            // (la meta a cuadros, un reflejo, una raya al centro).
             c.lineas = Lineas::Ninguna;
             return c;
         }

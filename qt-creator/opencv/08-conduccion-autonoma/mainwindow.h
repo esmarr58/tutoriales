@@ -84,9 +84,9 @@ private:
     double cps = 0;                 // cuadros por segundo medidos
 
     ParametrosVision vision;        // franja, umbral, zona de color
-    int anchoReferencia = 0;        // ancho del carril (px) la última vez que se vieron dos rayas
+    int anchoReferencia = 0;        // ancho del carril (px) la última vez con dos rayas
     Vista ultimaVista;              // lo que se vio en el último cuadro
-    QElapsedTimer desdeCuadro;      // hace cuánto llegó el último cuadro (vigilancia del video)
+    QElapsedTimer desdeCuadro;      // hace cuánto llegó el último cuadro (vigilancia)
 
     QWebSocket robot;               // comandos JSON al robot
     QTimer relojDecision;           // 125 ms: 8 decisiones por segundo
